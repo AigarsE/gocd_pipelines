@@ -1,10 +1,19 @@
 ---
 format_version: 10
+common:
+  deploy-tasks: &deploy-tasks
+    - exec: 
+        command: bash
+        argument:
+          - -c
+          - echo "Deploy on ${ENV_NAME} environment"
+
+
 pipelines:
   java_microservice:
     group: microservices
     lock_behavior: unlockWhenFinished
-    label_template:
+    label_template: "${git_java_microservice}"
     materials: 
       git_java_microservice:
         git: https://github.com/mtararujs/api_tests_ci.git
@@ -19,5 +28,50 @@ pipelines:
                 - exec:
                     command: bash
                     arguments:
-                      - -c
+                      - -c 
                       - echo "Building java app"
+      - deploy-dev:
+          environment_variables:
+            ENV_NAME: dev
+          jobs:
+            deploy:
+              tasks: *deploy-tasks
+      - test-dev:
+          jobs:
+            test:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c 
+                      - echo "Tests execution to DEV"
+      - deploy-int:
+          environment_variables:
+            ENV_NAME: int
+          jobs:
+            deploy:
+              tasks: *deploy-tasks
+      - test-int:
+          jobs:
+            test:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c 
+                      - echo "Tests execution to INT"
+      - deploy-prd:
+          environment_variables:
+            ENV_NAME: prd
+          jobs:
+            deploy:
+              tasks: *deploy-tasks
+      - test-prd:
+          jobs:
+            test:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c 
+                      - echo "Tests execution to PRD"

@@ -74,4 +74,4 @@ pipelines:
                     command: bash
                     arguments:
                       - -c 
-                      - echo "Tests execution to PRD"a
+                      - echo "Tests execution to PRD"
